@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue'
+import { computed, nextTick, ref, watchEffect } from 'vue'
 import { categories } from './data/shortcuts'
 
 type Theme = 'dark' | 'light'
@@ -24,6 +24,26 @@ watchEffect(() => {
     /* ignore */
   }
 })
+
+const lit = ref<Set<string>>(new Set())
+const litTimers = new Map<string, ReturnType<typeof setTimeout>>()
+
+function setLit(id: string, on: boolean) {
+  const next = new Set(lit.value)
+  if (on) next.add(id)
+  else next.delete(id)
+  lit.value = next
+}
+
+// Each row fades on its own timer, so several can be lit at once.
+// Remove then re-add the class so the fade restarts when the same row is clicked again.
+async function flash(id: string) {
+  clearTimeout(litTimers.get(id))
+  setLit(id, false)
+  await nextTick()
+  setLit(id, true)
+  litTimers.set(id, setTimeout(() => setLit(id, false), 1600))
+}
 
 const current = computed(() => categories.find((c) => c.id === active.value)!)
 
@@ -63,10 +83,26 @@ const groups = computed(() => {
 
   <main>
     <p v-if="current.note" class="note">{{ current.note }}</p>
+    <template v-if="!query.trim() && current.concepts">
+      <article v-for="c in current.concepts" :key="c.title" class="concept">
+        <h3>{{ c.title }}</h3>
+        <p>{{ c.text }}</p>
+        <pre v-if="c.ascii">{{ c.ascii }}</pre>
+      </article>
+    </template>
     <p v-if="!groups.length" class="note">No matches.</p>
     <section v-for="g in groups" :key="g.title">
       <h2>{{ g.title }}</h2>
-      <div v-for="(s, i) in g.items" :key="i" class="row">
+      <div
+        v-for="(s, i) in g.items"
+        :key="i"
+        class="row"
+        :class="{ lit: lit.has(`${active}:${g.title}:${i}`) }"
+        tabindex="0"
+        role="button"
+        @click="flash(`${active}:${g.title}:${i}`)"
+        @keydown.enter.space.prevent="flash(`${active}:${g.title}:${i}`)"
+      >
         <span class="keys">
           <template v-for="(alt, ai) in s.keys" :key="ai">
             <span v-if="ai" class="sep">/</span>

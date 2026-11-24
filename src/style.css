@@ -1,0 +1,73 @@
+:root {
+  --bg: #1a1b26;
+  --panel: #24283b;
+  --text: #c0caf5;
+  --muted: #7982a9;
+  --border: #3b4261;
+  --accent: #7aa2f7;
+  --kbd: #1f2335;
+}
+:root[data-theme='light'] {
+  --bg: #f5f6fa;
+  --panel: #ffffff;
+  --text: #2a2e45;
+  --muted: #6b7190;
+  --border: #d5d8e6;
+  --accent: #3a5bd9;
+  --kbd: #eef0f8;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 system-ui, sans-serif;
+}
+#app { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
+header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0 8px; }
+h1 { margin: 0; font-size: 1.4rem; }
+h1 span { color: var(--muted); font-weight: 400; font-size: 1rem; margin-left: 8px; }
+button, input {
+  font: inherit;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+}
+button { cursor: pointer; }
+nav {
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  border-bottom: 1px solid var(--border); padding-bottom: 12px;
+}
+nav button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+nav input { margin-left: auto; min-width: 180px; }
+.note { color: var(--muted); }
+section { margin-top: 24px; }
+h2 {
+  font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent); margin: 0 0 6px;
+}
+.row {
+  display: grid; grid-template-columns: minmax(150px, 40%) 1fr; gap: 12px;
+  padding: 7px 0; border-bottom: 1px solid var(--border);
+}
+.keys { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.combo { display: inline-flex; gap: 3px; }
+.sep { color: var(--muted); margin: 0 2px; }
+kbd {
+  font: 600 0.85rem ui-monospace, Consolas, monospace;
+  background: var(--kbd);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  padding: 1px 7px;
+}
+.desc em {
+  margin-left: 8px; font-size: 0.75rem; color: var(--muted);
+  border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; font-style: normal;
+}
+@media (max-width: 560px) {
+  .row { grid-template-columns: 1fr; gap: 2px; }
+  nav input { margin-left: 0; width: 100%; }
+}
